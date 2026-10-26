@@ -1,0 +1,34 @@
+Class WorkflowEngine {
+
+    Function getNextState(currentState, decision) {
+        rule = Database.query(
+            "SELECT next_status FROM workflow_rules WHERE current_status = ? AND decision = ?", 
+            [currentState, decision]
+        );
+        return rule.next_status; 
+    }
+}
+
+
+
+
+Class VacationController {
+
+    Function processApproval(requestId, decision) {
+        request = Database.find(requestId);
+        
+        engine = new WorkflowEngine();
+        nextStatus = engine.getNextState(request.status, decision);
+        
+        request.status = nextStatus;
+        request.updatedAt = getCurrentTimestamp();
+        Database.save(request);
+        
+        if (nextStatus == "APPROVED") {
+            DeductLeaveBalance(request.employeeId, request.daysCount);
+        } else if (nextStatus == "HR_PENDING") {
+            NotifyHRDepartment(request.id);
+        }
+    }
+}
+
