@@ -24,7 +24,7 @@ create table customer (
     passward varchar(50) not null
 );
 
-create table "order" (
+create table Order (
     order_id int PRIMARY KEY not null,
     customer_id int not null,
     order_date date not null,
@@ -40,7 +40,7 @@ create table order_details (
     quantity int not null,
     unit_price numeric(5,2) not null,
 
-    foreign key (order_id) references "order" (order_id),
+    foreign key (order_id) references Order (order_id),
     foreign key (product_id) references product (product_id)
 );
  ```
