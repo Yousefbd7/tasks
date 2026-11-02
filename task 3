@@ -1,3 +1,4 @@
+``` 
 create table category (
 category _id  int primary key,
 category_name  varchar(25)  not null
@@ -43,6 +44,8 @@ foreign key (order_id) references Order (order_id),
 foreign key (product_id) references Product (product_id)
 );
 
+```
 ----
+
 
 
