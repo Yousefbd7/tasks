@@ -1,0 +1,30 @@
+FUNCTION editPendingRequest(requestId, employeeId, newRequestData):
+    
+    request = DB.findRequestById(requestId)
+    
+    IF request IS NULL OR request.employeeId != employeeId THEN
+        RETURN Error("Request not found or unauthorized")
+    END IF
+    
+    IF request.status == "PENDING" OR request.status == "HR_PENDING" THEN
+        
+        BEGIN TRANSACTION
+            
+            request.startDate = newRequestData.startDate
+            request.endDate = newRequestData.endDate
+            request.requestedDays = newRequestData.requestedDays
+            request.reason = newRequestData.reason
+            
+            DB.save(request)
+            
+            ActivityLog.log("Request " + requestId + " updated by employee.")
+            
+        COMMIT TRANSACTION
+        
+        RETURN Success("Request updated successfully.")
+        
+    ELSE
+        RETURN Error("Only PENDING requests can be edited.")
+    END IF
+
+END FUNCTION
